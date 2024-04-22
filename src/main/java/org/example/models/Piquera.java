@@ -19,5 +19,15 @@ public class Piquera {
             }
         }
     }
-
+    public void procesarSolicitudInmediata(Solicitud solicitud){
+        for (Taxi taxi : taxis) {
+            if (taxi.getCapacidad()>=solicitud.getCantPersonas()
+                    && taxi.getCombustible()*5>= solicitud.getCantKm()){
+                taxis.remove(taxi);
+                solicitudes.remove(solicitud);
+                solicitudesEnEjecucion.add(new SolicitudEnEjecucion(solicitud,taxi));
+                break;
+            }
+        }
+    }
 }
