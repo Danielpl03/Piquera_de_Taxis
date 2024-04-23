@@ -1,7 +1,7 @@
 package org.example.models;
 
 
-public abstract class Taxi {
+public class Taxi {
     private String id;
     private String estado;
     private String marca;
@@ -10,6 +10,19 @@ public abstract class Taxi {
     private Chofer chofer;
 
     public Taxi() {
+    }
+
+    public Taxi(String id) {
+        this.id = id;
+    }
+
+    public Taxi(String id, String estado, String marca, int capacidad, int combustible, Chofer chofer) {
+        this.id = id;
+        this.estado = estado;
+        this.marca = marca;
+        this.capacidad = capacidad;
+        this.combustible = combustible;
+        this.chofer = chofer;
     }
 
     public String getId() {

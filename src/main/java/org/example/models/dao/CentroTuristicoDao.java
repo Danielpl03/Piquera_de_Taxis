@@ -41,7 +41,7 @@ public class CentroTuristicoDao implements CrudRepository<CentroTuristico>{
         if (dato.getId() > 0){
             consulta = "UPDATE centros_turisticos nombre_centro=?, tiene_contrato=? WHERE id_centro = ?";
         }else {
-            consulta = "INSERT INTO centros_turisticos(nombre_centro, tiene_contrato, id_centro)VALUES (?, ?, nextval('centros_turisticos_id_centro_seq'::regclass))";
+            consulta = "INSERT INTO centros_turisticos(nombre_centro, tiene_contrato) VALUES (?, ?)";
         }
         try(PreparedStatement stmt = connection.prepareStatement(consulta)){
             stmt.setString(1, dato.getNombre());

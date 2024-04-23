@@ -43,7 +43,7 @@ public class ServicioInmediatoDao implements CrudRepository<Solicitud>{
         if (dato.getId() > 0){
             consulta = "UPDATE servicios_inmediatos SET id_centro=?, direccion=?, destino=?, hora_recogida=?, cant_km=?, cant_personas=? WHERE id_solicitud = ?";
         }else {
-            consulta = "INSERT INTO servicios_inmediatos(id_centro, direccion, destino, hora_recogida, cant_km, cant_personas, id_solicitud) VALUES (?, ?, ?, ?, ?, ?, nextval('solicitudes2_id_solicitud_seq'::regclass))";
+            consulta = "INSERT INTO servicios_inmediatos(id_centro, direccion, destino, hora_recogida, cant_km, cant_personas) VALUES (?, ?, ?, ?, ?, ?)";
         }
         try(PreparedStatement stmt = connection.prepareStatement(consulta)){
             stmt.setInt(1, dato.getCentro().getId());
