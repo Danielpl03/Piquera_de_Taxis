@@ -6,7 +6,7 @@ package org.example.views;
 
 import org.example.models.CentroTuristico;
 import org.example.models.Solicitud;
-import org.example.services.Services;
+import org.example.services.CentrosTuristicosService;
 import org.example.services.Views;
 
 import java.awt.*;
@@ -17,7 +17,6 @@ import java.sql.SQLException;
  * @author Daniel
  */
 public class CrearCentroTuristicoform extends javax.swing.JDialog {
-    private final Services services = Services.getInstance();
     private final CentroTuristico centroTuristico;
     private final Solicitud solicitud;
 
@@ -148,7 +147,7 @@ public class CrearCentroTuristicoform extends javax.swing.JDialog {
         centroTuristico.setNombre(nombreCentro);
         centroTuristico.setTieneContrato(tieneContrato);
 
-        services.registrarCentroTuristico(centroTuristico);
+        CentrosTuristicosService.registrarCentroTuristico(centroTuristico);
         Views.vaciarTf(tf_nombreCentro);
     }//GEN-LAST:event_btn_registrarCentroActionPerformed
 

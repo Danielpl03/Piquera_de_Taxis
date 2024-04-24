@@ -1,7 +1,7 @@
 package org.example.models.dao;
 
 import org.example.estructuras.Cola;
-import org.example.estructuras.PilaYCola;
+import org.example.estructuras.LinkedList;
 import org.example.models.CentroTuristico;
 
 import java.sql.*;
@@ -10,22 +10,24 @@ public class CentroTuristicoDao implements CrudRepository<CentroTuristico>{
     private Connection connection;
 
     @Override
-    public PilaYCola<CentroTuristico> findById(int id) throws SQLException {
-        PilaYCola<CentroTuristico> centros = new Cola<>();
+    public CentroTuristico findById(int id) throws SQLException {
         try(PreparedStatement stmt = connection.prepareStatement("SELECT * FROM centros_turisticos Where id=?")){
             stmt.setInt(1, id);
             stmt.executeQuery();
             try (ResultSet rs = stmt.executeQuery()) {
-                CentroTuristico ct = rs.next() ? crearCentroTuristico(rs) : null;
-                if (ct != null) centros.push(ct);
+               return rs.next() ? crearCentroTuristico(rs) : null;
             }
         }
-        return centros;
     }
 
     @Override
-    public PilaYCola<CentroTuristico> findAll() throws SQLException {
-        PilaYCola<CentroTuristico> centros = new Cola<>();
+    public CentroTuristico findById(String id) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public LinkedList<CentroTuristico> findAll() throws SQLException {
+        LinkedList<CentroTuristico> centros = new Cola<>();
         try(Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM centros_turisticos")){
             while(rs.next()){
@@ -59,6 +61,11 @@ public class CentroTuristicoDao implements CrudRepository<CentroTuristico>{
             stmt.setInt(1, id);
             stmt.executeUpdate();
         }
+    }
+
+    @Override
+    public void delete(String id) throws SQLException {
+
     }
 
     @Override

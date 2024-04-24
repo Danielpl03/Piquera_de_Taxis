@@ -2,24 +2,20 @@ package org.example.views;
 
 import org.example.estructuras.Cola;
 import org.example.estructuras.Node;
-import org.example.models.CentroTuristico;
 import org.example.models.Solicitud;
-import org.example.services.Services;
+import org.example.services.SolicitudesService;
 import org.example.services.Views;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
 import java.time.LocalTime;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author Daniel
  */
 public class Panel_Principal extends javax.swing.JFrame {
-    private final Services services = Services.getInstance();
     JTable                  target            = new JTable();
     static int row   = -1;
 
@@ -41,19 +37,39 @@ public class Panel_Principal extends javax.swing.JFrame {
             return;
         }
 
-        Node<Solicitud> nodo = solicitudes.top();
-        while (nodo != null){
-            String centro = nodo.getDate().getCentro().getNombre();
-            String direccion = nodo.getDate().getDireccion();
-            String destino = nodo.getDate().getDestino();
-            LocalTime hora = nodo.getDate().getHora();
-            int personas = nodo.getDate().getCantPersonas();
-            float km = nodo.getDate().getCantKm();
+        Node<Solicitud> solicitud = solicitudes.top();
+        while (solicitud != null){
+            String centro = solicitud.getDate().getCentro().getNombre();
+            String direccion = solicitud.getDate().getDireccion();
+            String destino = solicitud.getDate().getDestino();
+            LocalTime hora = solicitud.getDate().getHora();
+            int personas = solicitud.getDate().getCantPersonas();
+            float km = solicitud.getDate().getCantKm();
 
             Object[] datos = {centro, direccion, destino, hora, personas, km};
             modeloT.addRow(datos);
-            nodo = nodo.getNext();
+            solicitud = solicitud.getNext();
         }
+    }
+    private void llenarTabla(Solicitud solicitud){
+        DefaultTableModel modeloT = (DefaultTableModel) tabla_solicitudes.getModel();
+        for (int i = modeloT.getRowCount() - 1; i >= 0; i--) {
+            modeloT.removeRow(i);
+        }
+        if(solicitud == null){
+            JOptionPane.showMessageDialog(this, "No hay datos para mostrar");
+            return;
+        }
+
+        String centro = solicitud.getCentro().getNombre();
+        String direccion = solicitud.getDireccion();
+        String destino = solicitud.getDestino();
+        LocalTime hora = solicitud.getHora();
+        int personas = solicitud.getCantPersonas();
+        float km = solicitud.getCantKm();
+
+        Object[] datos = {centro, direccion, destino, hora, personas, km};
+        modeloT.addRow(datos);
     }
 
     /**
@@ -309,16 +325,16 @@ public class Panel_Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_crearSolicitudActionPerformed
 
     private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_ActualizarActionPerformed
-        llenarTabla(services.mostrarSolicitudes());
+        llenarTabla(SolicitudesService.getSolicitudes());
     }//GEN-LAST:event_ActualizarActionPerformed
 
     private void btnMenu_G_solicitudesActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btnMenu_G_solicitudesActionPerformed
         Views.change_panel(panel_solicitudes, panel_home);
-        llenarTabla(services.mostrarSolicitudes());
+        llenarTabla(SolicitudesService.getSolicitudes());
     }//GEN-LAST:event_btnMenu_G_solicitudesActionPerformed
 
     private void btnMenu_G_taxisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenu_G_taxisActionPerformed
-        // TODO add your handling code here:
+        TaxiForm taxiForm = new TaxiForm(this, true);
     }//GEN-LAST:event_btnMenu_G_taxisActionPerformed
 
     private void btnMenu_G_serviciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenu_G_serviciosActionPerformed
@@ -339,12 +355,12 @@ public class Panel_Principal extends javax.swing.JFrame {
 
     private void btn_buscarSolicitudActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btn_buscarSolicitudActionPerformed
         int id = Integer.parseInt(tf_buscar.getText());
-        llenarTabla(services.mostrarSolicitud(id));
+        llenarTabla(SolicitudesService.getSolicitud(id));
         tf_buscar.setText("Buscar...");
     }//GEN-LAST:event_btn_buscarSolicitudActionPerformed
 
     private void btn_editarSolicitudActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btn_editarSolicitudActionPerformed
-        CrearSolicitudForm csf = new CrearSolicitudForm(this, true, services.mostrarSolicitudes().getIndex(row));
+        CrearSolicitudForm csf = new CrearSolicitudForm(this, true, SolicitudesService.getSolicitudes().getIndex(row));
         row = -1;
         btn_editarSolicitud.setEnabled(false);
     }//GEN-LAST:event_btn_editarSolicitudActionPerformed

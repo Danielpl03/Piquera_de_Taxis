@@ -8,7 +8,8 @@ import org.example.estructuras.Cola;
 import org.example.estructuras.Node;
 import org.example.models.CentroTuristico;
 import org.example.models.Solicitud;
-import org.example.services.Services;
+import org.example.services.CentrosTuristicosService;
+import org.example.services.SolicitudesService;
 import org.example.services.Views;
 
 import javax.swing.*;
@@ -22,7 +23,6 @@ import java.time.format.DateTimeParseException;
  * @author Daniel
  */
 public class CrearSolicitudForm extends javax.swing.JDialog {
-    private final Services services = Services.getInstance();
     private Solicitud solicitud;
     DefaultComboBoxModel<String> boxModel = new DefaultComboBoxModel<>();
 
@@ -32,7 +32,7 @@ public class CrearSolicitudForm extends javax.swing.JDialog {
     public CrearSolicitudForm(java.awt.Frame parent, boolean modal, Solicitud solicitud) throws SQLException {
         super(parent, modal);
         this.solicitud = solicitud;
-        llenarBoxCentros(services.mostrarCentrosTuristicos());
+        llenarBoxCentros(CentrosTuristicosService.getCentrosTuristicos());
         initComponents();
         llenarCampos();
         this.setVisible(true);
@@ -284,7 +284,7 @@ public class CrearSolicitudForm extends javax.swing.JDialog {
                 int personas = Integer.parseInt(tf_personas.getText().trim());
                 float km = Float.parseFloat(tf_km.getText().trim());
 
-                services.registrarSolicitud(solicitud.getId(), index, direccion, destino, hora, personas, km, inmediato);
+                SolicitudesService.registrarSolicitud(solicitud.getId(), index, direccion, destino, hora, personas, km, inmediato);
 
                 Views.vaciarTf(tf_direccion, tf_destino, tf_hora, tf_personas, tf_km);
                 this.dispose();

@@ -1,9 +1,9 @@
 package org.example.models.dao;
 
 import org.example.estructuras.Cola;
-import org.example.estructuras.PilaYCola;
-import org.example.models.CentroTuristico;
+import org.example.estructuras.LinkedList;
 import org.example.models.Solicitud;
+import org.example.services.SolicitudesService;
 
 import java.sql.*;
 
@@ -18,27 +18,29 @@ public class SolicitudDao implements CrudRepository<Solicitud> {
     }
 
     @Override
-    public PilaYCola<Solicitud> findById(int id) throws SQLException {
-        PilaYCola<Solicitud> solicitudes = new Cola<>();
-        try(PreparedStatement stmt = connection.prepareStatement("SELECT *, ct.nombre_centro FROM solicitudes AS s INNER JOIN " +
+    public Solicitud findById(int id) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement("SELECT * FROM solicitudes AS s INNER JOIN " +
                 "centros_turisticos AS ct ON (ct.id_centro = s.id_centro) WHERE id_solicitud = ?")){
             stmt.setInt(1, id);
             try(ResultSet rs = stmt.executeQuery()) {
-                Solicitud solicitud = rs.next()? crearSolicitud(rs) : null;
-                if (solicitud != null) solicitudes.push(solicitud);
+                 return rs.next() ? SolicitudesService.crearSolicitud(rs) : null;
             }
         }
-        return solicitudes;
     }
 
     @Override
-    public PilaYCola<Solicitud> findAll() throws SQLException{
-        PilaYCola<Solicitud> solicitudes = new Cola<>();
+    public Solicitud findById(String id) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public LinkedList<Solicitud> findAll() throws SQLException{
+        LinkedList<Solicitud> solicitudes = new Cola<>();
         try(Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT s.*, ct.* FROM solicitudes AS s INNER JOIN " +
+            ResultSet rs = stmt.executeQuery("SELECT * FROM solicitudes AS s INNER JOIN " +
                     "centros_turisticos AS ct ON (ct.id_centro = s.id_centro) ORDER BY ct.tiene_contrato desc")) {
             while (rs.next()){
-                solicitudes.push(crearSolicitud(rs));
+                solicitudes.push(SolicitudesService.crearSolicitud(rs));
             }
         }
         return solicitudes;
@@ -75,22 +77,12 @@ public class SolicitudDao implements CrudRepository<Solicitud> {
     }
 
     @Override
-    public void setConnection(Connection connection) throws SQLException {
-        this.connection = connection;
+    public void delete(String id) throws SQLException {
+
     }
 
-    private Solicitud crearSolicitud(ResultSet rs) throws SQLException {
-        CentroTuristico ct = new CentroTuristico(
-                rs.getInt("id_centro"),
-                rs.getString("nombre_centro"),
-                rs.getBoolean("tiene_contrato")
-        );
-        return new Solicitud(rs.getInt("id_solicitud"), ct,
-                            rs.getString("direccion"),
-                            rs.getString("destino"),
-                            rs.getTime("hora_recogida").toLocalTime(),
-                            rs.getInt("cant_personas"),
-                            rs.getFloat("cant_km")
-        );
+    @Override
+    public void setConnection(Connection connection) throws SQLException {
+        this.connection = connection;
     }
 }

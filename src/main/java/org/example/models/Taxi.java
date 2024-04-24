@@ -1,13 +1,13 @@
 package org.example.models;
 
 
-public class Taxi {
+public abstract class Taxi {
     private String id;
     private String estado;
     private String marca;
     private int capacidad;
-    private int combustible;
-    private Chofer chofer;
+    private float combustible;
+    private String chofer;
 
     public Taxi() {
     }
@@ -16,7 +16,7 @@ public class Taxi {
         this.id = id;
     }
 
-    public Taxi(String id, String estado, String marca, int capacidad, int combustible, Chofer chofer) {
+    public Taxi(String id, String estado, String marca, int capacidad, float combustible, String chofer) {
         this.id = id;
         this.estado = estado;
         this.marca = marca;
@@ -57,19 +57,25 @@ public class Taxi {
         this.capacidad = capacidad;
     }
 
-    public int getCombustible() {
+    public float getCombustible() {
         return combustible;
     }
 
-    public void setCombustible(int combustible) {
+    public void setCombustible(float combustible) {
         this.combustible = combustible;
     }
 
-    public Chofer getChofer() {
+    public String getChofer() {
         return chofer;
     }
 
-    public void setChofer(Chofer chofer) {
+    public void setChofer(String chofer) {
         this.chofer = chofer;
+    }
+
+    public String getTipo(){
+        return this instanceof TaxiEstatal ? ((TaxiEstatal)this).getEmpresa()
+                                           : ((TaxiParticular)this).getNoPatente()
+        ;
     }
 }

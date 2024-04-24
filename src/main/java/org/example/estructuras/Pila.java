@@ -1,6 +1,8 @@
 package org.example.estructuras;
 
-public class Pila<T> implements PilaYCola<T>{
+import java.util.Iterator;
+
+public class Pila<T> implements LinkedList<T> {
     private Node<T> top;
     int size;
 
@@ -46,5 +48,10 @@ public class Pila<T> implements PilaYCola<T>{
     @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new LinkedListIterator<>(top);
     }
 }
