@@ -2,25 +2,15 @@ package org.example.models;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
-public class ServicioCulminado {
-    private ServicioEnEjecucion servicioEnEjecucion;
+public class ServicioCulminado extends ServicioEnEjecucion{
     private LocalDate fecha;
     private LocalTime horaFin;
 
-    public ServicioCulminado(ServicioEnEjecucion servicioEnEjecucion, LocalDate fecha, LocalTime horaFin) {
-        this.servicioEnEjecucion = servicioEnEjecucion;
+    public ServicioCulminado(Solicitud solicitud, Taxi taxi, LocalDate fecha, LocalTime horaFin) {
+        super(solicitud, taxi);
         this.fecha = fecha;
         this.horaFin = horaFin;
-    }
-
-    public ServicioEnEjecucion getServicioEnEjecucion() {
-        return servicioEnEjecucion;
-    }
-
-    public void setServicioEnEjecucion(ServicioEnEjecucion servicioEnEjecucion) {
-        this.servicioEnEjecucion = servicioEnEjecucion;
     }
 
     public LocalDate getFecha() {

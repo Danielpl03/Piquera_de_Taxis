@@ -1,8 +1,10 @@
 package org.example.models.dao;
 
 import org.example.estructuras.Cola;
-import org.example.estructuras.PilaYCola;
+import org.example.estructuras.LinkedList;
 import org.example.models.*;
+import org.example.services.SolicitudesService;
+import org.example.services.TaxisService;
 
 import java.sql.*;
 
@@ -10,25 +12,26 @@ public class ServciosEnEjecucionDao implements CrudRepository<ServicioEnEjecucio
     private Connection connection;
 
     @Override
-    public PilaYCola<ServicioEnEjecucion> findById(int id) throws SQLException {
-        PilaYCola<ServicioEnEjecucion> servicios = new Cola<>();
-        try(PreparedStatement stmt = connection.prepareStatement("SELECT sej.*, ct.nombre_centro FROM servicios_en_ejecucion AS sej INNER JOIN " +
+    public ServicioEnEjecucion findById(int id) throws SQLException {
+        try(PreparedStatement stmt = connection.prepareStatement("SELECT * FROM servicios_en_ejecucion AS sej INNER JOIN " +
                 "centros_turisticos AS ct ON (ct.id_centro = se.id_centro) WHERE id_solicitud = ?")){
             stmt.setInt(1, id);
             try(ResultSet rs = stmt.executeQuery()) {
-                ServicioEnEjecucion servicioEnEjecucion = rs.next() ? crearServicioEnEjecucion(rs) : null;
-                if (servicioEnEjecucion != null) servicios.push(servicioEnEjecucion);
+                return rs.next() ? crearServicioEnEjecucion(rs) : null;
             }
         }
-        return servicios;
     }
 
     @Override
-    public PilaYCola<ServicioEnEjecucion> findAll() throws SQLException{
-        PilaYCola<ServicioEnEjecucion> servicios = new Cola<>();
+    public ServicioEnEjecucion findById(String id) throws SQLException {
+        return null;
+    }
+
+    @Override
+    public LinkedList<ServicioEnEjecucion> findAll() throws SQLException{
+        LinkedList<ServicioEnEjecucion> servicios = new Cola<>();
         try(Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT sej.*, ct.nombre_centro, ct.tiene_contrato" +
-                    "FROM servicios_en_ejecucion AS sej INNER JOIN centros_turisticos AS ct ON (ct.id_centro = sej.id_centro) ")) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM servicios_en_ejecucion AS sej INNER JOIN centros_turisticos AS ct ON (ct.id_centro = sej.id_centro) ")) {
             while (rs.next()){
                 servicios.push(crearServicioEnEjecucion(rs));
             }
@@ -68,23 +71,19 @@ public class ServciosEnEjecucionDao implements CrudRepository<ServicioEnEjecucio
     }
 
     @Override
+    public void delete(String id) throws SQLException {
+
+    }
+
+    @Override
     public void setConnection(Connection connection) throws SQLException {
         this.connection = connection;
     }
 
     private ServicioEnEjecucion crearServicioEnEjecucion(ResultSet rs) throws SQLException {
-        CentroTuristico ct = new CentroTuristico(
-                rs.getInt("id_centro"),
-                rs.getString("nombre_centro"),
-                rs.getBoolean("tiene_contrato")
+        return new ServicioEnEjecucion(
+                SolicitudesService.crearSolicitud(rs),
+                TaxisService.crearTaxi(rs)
         );
-
-        return new ServicioEnEjecucion(new Solicitud(rs.getInt("id_solicitud"), ct,
-                rs.getString("direccion"),
-                rs.getString("destino"),
-                rs.getTime("hora_recogida").toLocalTime(),
-                rs.getInt("cant_personas"),
-                rs.getFloat("cant_km")
-        ), new Taxi(rs.getString("id_chapa")));
     }
 }

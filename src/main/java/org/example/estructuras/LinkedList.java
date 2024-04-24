@@ -1,6 +1,6 @@
 package org.example.estructuras;
 
-public interface PilaYCola<T> {
+public interface LinkedList<T> extends Iterable<T>{
 
     T pop();
 

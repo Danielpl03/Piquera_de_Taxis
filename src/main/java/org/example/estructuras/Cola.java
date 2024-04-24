@@ -1,8 +1,8 @@
 package org.example.estructuras;
 
-import org.example.models.Solicitud;
+import java.util.Iterator;
 
-public class Cola<T> implements PilaYCola<T>{
+public class Cola<T> implements LinkedList<T> {
     Node<T> primero;
     Node<T> ultimo;
     int size;
@@ -43,14 +43,13 @@ public class Cola<T> implements PilaYCola<T>{
 
     @Override
     public T getIndex(int index) {
-        Node<T> nodo = primero;
-        int cont = 0;
         if (index < 0 || index >= size)return null;
-        while(nodo != null && cont < index){
-            nodo = nodo.getNext();
+        int cont = 0;
+        for (T dato: this) {
+            if (cont == index) return dato;
             cont++;
         }
-        return nodo != null ? nodo.getDate() : null;
+        return null;
     }
 
     @Override
@@ -62,5 +61,10 @@ public class Cola<T> implements PilaYCola<T>{
     @Override
     public int size() {
         return size;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new LinkedListIterator<>(primero);
     }
 }
