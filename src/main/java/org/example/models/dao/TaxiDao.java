@@ -102,4 +102,8 @@ public class TaxiDao implements CrudRepository<Taxi>{
     public void setConnection(Connection connection) throws SQLException {
         this.connection = connection;
     }
+     public void actualizarTaxiDeDisponibleAOcupado(Taxi taxi, String tabla){
+        String consulta = /*todo consulta sql*/"";
+        // todo procesar la consulta
+    }
 }
