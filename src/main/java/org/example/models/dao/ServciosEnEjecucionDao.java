@@ -2,6 +2,7 @@ package org.example.models.dao;
 
 import org.example.estructuras.Cola;
 import org.example.estructuras.LinkedList;
+import org.example.estructuras.LinkedListSimple;
 import org.example.models.*;
 import org.example.services.SolicitudesService;
 import org.example.services.TaxisService;
@@ -29,11 +30,12 @@ public class ServciosEnEjecucionDao implements CrudRepository<ServicioEnEjecucio
 
     @Override
     public LinkedList<ServicioEnEjecucion> findAll() throws SQLException{
-        LinkedList<ServicioEnEjecucion> servicios = new Cola<>();
+        LinkedList<ServicioEnEjecucion> servicios = new LinkedListSimple<>();
         try(Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM servicios_en_ejecucion AS sej INNER JOIN centros_turisticos AS ct ON (ct.id_centro = sej.id_centro) ")) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM servicios_en_ejecucion AS sej INNER JOIN centros_turisticos AS ct ON (ct.id_centro = sej.id_centro) " +
+                    "INNER JOIN taxis AS t ON (t.id_chapa = sej.id_taxi) ")) {
             while (rs.next()){
-                servicios.push(crearServicioEnEjecucion(rs));
+                servicios.add(crearServicioEnEjecucion(rs));
             }
         }
         return servicios;

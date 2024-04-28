@@ -2,13 +2,17 @@ package org.example.estructuras;
 
 public interface LinkedList<T> extends Iterable<T>{
 
-    T pop();
+    T remove();
 
-    Node<T> top();
+    T remove(int index);
 
-    T getIndex(int index);
+    T remove(T dato);
 
-    void push(T info);
+    Node<T> getFirst();
+
+    T get(int index);
+
+    void add(T info);
 
     boolean isEmpty();
 

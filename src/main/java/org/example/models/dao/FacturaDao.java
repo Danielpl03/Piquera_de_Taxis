@@ -2,6 +2,7 @@ package org.example.models.dao;
 
 import org.example.estructuras.Cola;
 import org.example.estructuras.LinkedList;
+import org.example.estructuras.LinkedListSimple;
 import org.example.models.*;
 import org.example.services.SolicitudesService;
 import org.example.services.TaxisService;
@@ -30,13 +31,13 @@ public class FacturaDao implements CrudRepository<Factura>{
 
     @Override
     public LinkedList<Factura> findAll() throws SQLException{
-        LinkedList<Factura> facturas = new Cola<>();
+        LinkedList<Factura> facturas = new LinkedListSimple<>();
         try(Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT f.precio FROM facturas AS f INNER JOIN " +
                     "servicios_culminados AS sc ON (sc.id_solicitud = f.id_servicio_culminado) INNER JOIN " +
                     "centros_turisticos AS ct ON (ct.id_centro = sc.id_centro)")) {
             while (rs.next()){
-                facturas.push(crearFactura(rs));
+                facturas.add(crearFactura(rs));
             }
         }
         return facturas;

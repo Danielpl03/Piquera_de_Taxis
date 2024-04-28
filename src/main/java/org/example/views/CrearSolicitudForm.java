@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package org.example.views;
 
 import org.example.estructuras.Cola;
+import org.example.estructuras.LinkedList;
 import org.example.estructuras.Node;
 import org.example.models.CentroTuristico;
 import org.example.models.Solicitud;
@@ -29,7 +26,7 @@ public class CrearSolicitudForm extends javax.swing.JDialog {
     /**
      * Creates new form CrearSolicitudForm
      */
-    public CrearSolicitudForm(java.awt.Frame parent, boolean modal, Solicitud solicitud) throws SQLException {
+    public CrearSolicitudForm(java.awt.Frame parent, boolean modal, Solicitud solicitud) {
         super(parent, modal);
         this.solicitud = solicitud;
         llenarBoxCentros(CentrosTuristicosService.getCentrosTuristicos());
@@ -47,13 +44,11 @@ public class CrearSolicitudForm extends javax.swing.JDialog {
         tf_km.setText(solicitud.getCantKm() > 0 ? String.valueOf(solicitud.getCantKm()) : "");
     }
 
-    private void llenarBoxCentros(Cola<CentroTuristico> centros){
+    private void llenarBoxCentros(LinkedList<CentroTuristico> centros){
 
         if (!centros.isEmpty()){
-            Node<CentroTuristico> nodo = centros.top();
-            while (nodo != null){
-                boxModel.addElement(nodo.getDate().getNombre());
-                nodo = nodo.getNext();
+            for (CentroTuristico centro: centros) {
+                boxModel.addElement(centro.getNombre());
             }
         }else
             boxModel.addElement("No hay centros");

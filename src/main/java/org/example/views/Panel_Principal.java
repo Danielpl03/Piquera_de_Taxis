@@ -3,6 +3,7 @@ package org.example.views;
 import org.example.estructuras.Cola;
 import org.example.estructuras.Node;
 import org.example.models.Solicitud;
+import org.example.services.Piquera;
 import org.example.services.SolicitudesService;
 import org.example.services.Views;
 
@@ -37,7 +38,7 @@ public class Panel_Principal extends javax.swing.JFrame {
             return;
         }
 
-        Node<Solicitud> solicitud = solicitudes.top();
+        Node<Solicitud> solicitud = solicitudes.getFirst();
         while (solicitud != null){
             String centro = solicitud.getDate().getCentro().getNombre();
             String direccion = solicitud.getDate().getDireccion();
@@ -94,6 +95,7 @@ public class Panel_Principal extends javax.swing.JFrame {
         tf_buscar = new javax.swing.JTextField();
         btn_buscarSolicitud = new javax.swing.JButton();
         btn_editarSolicitud = new javax.swing.JButton();
+        btn_asignarSolicitudes = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         btnMenu_G_solicitudes = new javax.swing.JMenuItem();
@@ -158,11 +160,7 @@ public class Panel_Principal extends javax.swing.JFrame {
         btn_crearSolicitud.setText("Registrar solicitud");
         btn_crearSolicitud.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    btn_crearSolicitudActionPerformed(evt);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                btn_crearSolicitudActionPerformed(evt);
             }
         });
 
@@ -170,11 +168,7 @@ public class Panel_Principal extends javax.swing.JFrame {
         Actualizar.setText("Actualizar");
         Actualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    ActualizarActionPerformed(evt);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                ActualizarActionPerformed(evt);
             }
         });
 
@@ -202,11 +196,7 @@ public class Panel_Principal extends javax.swing.JFrame {
 
         btn_buscarSolicitud.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    btn_buscarSolicitudActionPerformed(evt);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                btn_buscarSolicitudActionPerformed(evt);
             }
         });
 
@@ -215,11 +205,15 @@ public class Panel_Principal extends javax.swing.JFrame {
         btn_editarSolicitud.setEnabled(false);
         btn_editarSolicitud.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    btn_editarSolicitudActionPerformed(evt);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                btn_editarSolicitudActionPerformed(evt);
+            }
+        });
+
+        btn_asignarSolicitudes.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btn_asignarSolicitudes.setText("Asignar Solicitudes");
+        btn_asignarSolicitudes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_asignarSolicitudesActionPerformed(evt);
             }
         });
 
@@ -228,13 +222,15 @@ public class Panel_Principal extends javax.swing.JFrame {
         panel_solicitudesLayout.setHorizontalGroup(
             panel_solicitudesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel_solicitudesLayout.createSequentialGroup()
-                .addGap(95, 95, 95)
+                .addContainerGap()
                 .addComponent(btn_crearSolicitud)
-                .addGap(59, 59, 59)
+                .addGap(18, 18, 18)
                 .addComponent(btn_editarSolicitud)
-                .addGap(71, 71, 71)
-                .addComponent(Actualizar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btn_asignarSolicitudes)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Actualizar)
+                .addGap(18, 18, 18)
                 .addComponent(btn_Atras)
                 .addGap(32, 32, 32))
             .addGroup(panel_solicitudesLayout.createSequentialGroup()
@@ -265,7 +261,8 @@ public class Panel_Principal extends javax.swing.JFrame {
                     .addComponent(btn_crearSolicitud)
                     .addComponent(Actualizar)
                     .addComponent(btn_Atras)
-                    .addComponent(btn_editarSolicitud))
+                    .addComponent(btn_editarSolicitud)
+                    .addComponent(btn_asignarSolicitudes))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
 
@@ -276,11 +273,7 @@ public class Panel_Principal extends javax.swing.JFrame {
         btnMenu_G_solicitudes.setText("Gestionar solicitudes");
         btnMenu_G_solicitudes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try {
-                    btnMenu_G_solicitudesActionPerformed(evt);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
+                btnMenu_G_solicitudesActionPerformed(evt);
             }
         });
         jMenu1.add(btnMenu_G_solicitudes);
@@ -320,15 +313,15 @@ public class Panel_Principal extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btn_crearSolicitudActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btn_crearSolicitudActionPerformed
+    private void btn_crearSolicitudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_crearSolicitudActionPerformed
         CrearSolicitudForm csf = new CrearSolicitudForm(this, true, new Solicitud());
     }//GEN-LAST:event_btn_crearSolicitudActionPerformed
 
-    private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_ActualizarActionPerformed
+    private void ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActualizarActionPerformed
         llenarTabla(SolicitudesService.getSolicitudes());
     }//GEN-LAST:event_ActualizarActionPerformed
 
-    private void btnMenu_G_solicitudesActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btnMenu_G_solicitudesActionPerformed
+    private void btnMenu_G_solicitudesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenu_G_solicitudesActionPerformed
         Views.change_panel(panel_solicitudes, panel_home);
         llenarTabla(SolicitudesService.getSolicitudes());
     }//GEN-LAST:event_btnMenu_G_solicitudesActionPerformed
@@ -338,7 +331,7 @@ public class Panel_Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnMenu_G_taxisActionPerformed
 
     private void btnMenu_G_serviciosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMenu_G_serviciosActionPerformed
-        // TODO add your handling code here:
+        ServiciosForm serviciosForm = new ServiciosForm(this, true);
     }//GEN-LAST:event_btnMenu_G_serviciosActionPerformed
 
     private void btn_AtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_AtrasActionPerformed
@@ -353,14 +346,14 @@ public class Panel_Principal extends javax.swing.JFrame {
 //        tf_buscar.setText("Buscar...");
     }//GEN-LAST:event_tf_buscarFocusLost
 
-    private void btn_buscarSolicitudActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btn_buscarSolicitudActionPerformed
+    private void btn_buscarSolicitudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buscarSolicitudActionPerformed
         int id = Integer.parseInt(tf_buscar.getText());
         llenarTabla(SolicitudesService.getSolicitud(id));
         tf_buscar.setText("Buscar...");
     }//GEN-LAST:event_btn_buscarSolicitudActionPerformed
 
-    private void btn_editarSolicitudActionPerformed(java.awt.event.ActionEvent evt) throws SQLException {//GEN-FIRST:event_btn_editarSolicitudActionPerformed
-        CrearSolicitudForm csf = new CrearSolicitudForm(this, true, SolicitudesService.getSolicitudes().getIndex(row));
+    private void btn_editarSolicitudActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarSolicitudActionPerformed
+        CrearSolicitudForm csf = new CrearSolicitudForm(this, true, SolicitudesService.getSolicitudes().get(row));
         row = -1;
         btn_editarSolicitud.setEnabled(false);
     }//GEN-LAST:event_btn_editarSolicitudActionPerformed
@@ -373,6 +366,10 @@ public class Panel_Principal extends javax.swing.JFrame {
             btn_editarSolicitud.setEnabled(true);
         }
     }//GEN-LAST:event_tabla_solicitudesMouseClicked
+
+    private void btn_asignarSolicitudesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_asignarSolicitudesActionPerformed
+        Piquera.asignarSolicitudes();
+    }//GEN-LAST:event_btn_asignarSolicitudesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -415,6 +412,7 @@ public class Panel_Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnMenu_G_solicitudes;
     private javax.swing.JMenuItem btnMenu_G_taxis;
     private javax.swing.JButton btn_Atras;
+    private javax.swing.JButton btn_asignarSolicitudes;
     private javax.swing.JButton btn_buscarSolicitud;
     private javax.swing.JButton btn_crearSolicitud;
     private javax.swing.JButton btn_editarSolicitud;

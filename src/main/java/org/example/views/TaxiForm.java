@@ -1,22 +1,58 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package org.example.views;
+
+import org.example.estructuras.LinkedList;
+import org.example.models.Taxi;
+import org.example.models.TaxiEstatal;
+import org.example.models.TaxiParticular;
+import org.example.services.TaxisService;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 
 /**
  *
  * @author jorge
  */
 public class TaxiForm extends javax.swing.JDialog {
+    JTable target    = new JTable();
+    static int row   = -1;
 
-    /**
-     * Creates new form puta
-     */
     public TaxiForm(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        llenarTabla(TaxisService.getTaxis());
         setVisible(true);
+    }
+    
+    private void llenarTabla(LinkedList<Taxi> taxis){
+        DefaultTableModel modeloT = (DefaultTableModel) tablaTaxis.getModel();
+        for (int i = modeloT.getRowCount() - 1; i >= 0; i--) {
+            modeloT.removeRow(i);
+        }
+        if(taxis.isEmpty()){
+            JOptionPane.showMessageDialog(this, "No hay datos para mostrar");
+            return;
+        }
+        System.out.println(taxis);
+        for (Taxi taxi: taxis) {
+            String chapa = taxi.getId();
+            String marca = taxi.getMarca();
+            String estado = taxi.getEstado();
+            int capacidad = taxi.getCapacidad();
+            String chofer = taxi.getChofer();
+            float km = taxi.getCombustible();
+            String empresa, patente;
+            Object[] datos;
+            if(taxi instanceof TaxiEstatal){
+                empresa = ((TaxiEstatal)taxi).getEmpresa();
+                datos = new Object[]{chapa, marca, estado, capacidad, chofer, km, empresa, "  -  "};
+            }else{
+                patente = ((TaxiParticular)taxi).getNoPatente();
+                datos = new Object[]{chapa, marca, estado, capacidad, chofer, km, "  -  ", patente};
+            }
+            modeloT.addRow(datos);
+        }
     }
 
     /**
@@ -30,7 +66,7 @@ public class TaxiForm extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaTaxis = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         btn_registrarTaxi = new javax.swing.JButton();
         btn_editarTaxi = new javax.swing.JButton();
@@ -39,23 +75,20 @@ public class TaxiForm extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaTaxis.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Chapa", "Estado", "Marca", "Capacidad", "Chofer", "Combustible", "Empresa", "No. patente"
+                "Chapa", "Marca", "Estado", "Capacidad", "Chofer", "Combustible", "Empresa", "No. patente"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+        ));
+        tablaTaxis.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaTaxisMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tablaTaxis);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -63,15 +96,37 @@ public class TaxiForm extends javax.swing.JDialog {
 
         btn_registrarTaxi.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_registrarTaxi.setText("Registrar Taxi");
+        btn_registrarTaxi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_registrarTaxiActionPerformed(evt);
+            }
+        });
 
         btn_editarTaxi.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_editarTaxi.setText("Editar Taxi");
+        btn_editarTaxi.setEnabled(false);
+        btn_editarTaxi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_editarTaxiActionPerformed(evt);
+            }
+        });
 
         btn_eliminarTaxi.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btn_eliminarTaxi.setText("Eliminar Taxi");
+        btn_eliminarTaxi.setEnabled(false);
+        btn_eliminarTaxi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_eliminarTaxiActionPerformed(evt);
+            }
+        });
 
         btn_AtrasTaxiForm.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btn_AtrasTaxiForm.setText("Atraás");
+        btn_AtrasTaxiForm.setText("Atrás");
+        btn_AtrasTaxiForm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_AtrasTaxiFormActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -127,6 +182,42 @@ public class TaxiForm extends javax.swing.JDialog {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btn_registrarTaxiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_registrarTaxiActionPerformed
+        CrearTaxiForm crearTaxiForm = new CrearTaxiForm((Frame) this.getParent(), true, null);
+        llenarTabla(TaxisService.getTaxis());
+    }//GEN-LAST:event_btn_registrarTaxiActionPerformed
+
+    private void btn_editarTaxiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_editarTaxiActionPerformed
+        CrearTaxiForm crearTaxiForm = new CrearTaxiForm((Frame) this.getParent(), true, TaxisService.getTaxis().get(row));
+
+        row = -1;
+        btn_editarTaxi.setEnabled(false);
+        btn_eliminarTaxi.setEnabled(false);
+        llenarTabla(TaxisService.getTaxis());
+    }//GEN-LAST:event_btn_editarTaxiActionPerformed
+
+    private void btn_eliminarTaxiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarTaxiActionPerformed
+        TaxisService.eliminartaxi(TaxisService.getTaxis().get(row).getId());
+
+        row = -1;
+        btn_editarTaxi.setEnabled(false);
+        btn_eliminarTaxi.setEnabled(false);
+        llenarTabla(TaxisService.getTaxis());
+    }//GEN-LAST:event_btn_eliminarTaxiActionPerformed
+
+    private void btn_AtrasTaxiFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_AtrasTaxiFormActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btn_AtrasTaxiFormActionPerformed
+
+    private void tablaTaxisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaTaxisMouseClicked
+        if (evt.getClickCount() == 1) {  //Si se hizo un click
+            target = (JTable) evt.getSource();
+            row    = target.getSelectedRow(); // Obtener la fila
+
+            btn_editarTaxi.setEnabled(true);
+            btn_eliminarTaxi.setEnabled(true);
+        }    }//GEN-LAST:event_tablaTaxisMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -158,7 +249,8 @@ public class TaxiForm extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                TaxiForm dialog = new TaxiForm(new javax.swing.JFrame(), true);
+                TaxiForm dialog = null;
+                dialog = new TaxiForm(new JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -178,6 +270,6 @@ public class TaxiForm extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tablaTaxis;
     // End of variables declaration//GEN-END:variables
 }

@@ -7,7 +7,7 @@ public class Pila<T> implements LinkedList<T> {
     int size;
 
     @Override
-    public void push(T info) {
+    public void add(T info) {
         Node<T> nodo = new Node<>(info);
         if(top != null) nodo.setBack(top);
         top = nodo;
@@ -15,7 +15,7 @@ public class Pila<T> implements LinkedList<T> {
     }
 
     @Override
-    public T pop() {
+    public T remove() {
         if (isEmpty())return null;
         T aux = top.getDate();
         top = top.getBack();
@@ -24,7 +24,19 @@ public class Pila<T> implements LinkedList<T> {
     }
 
     @Override
-    public Node<T> top() {
+    @Deprecated
+    public T remove(int index) {
+        throw new RuntimeException("No aplicable method");
+    }
+
+    @Override
+    @Deprecated
+    public T remove(T dato) {
+        throw new RuntimeException("No aplicable method");
+    }
+
+    @Override
+    public Node<T> getFirst() {
         if (isEmpty())return null;
         return top;
     }
@@ -35,7 +47,7 @@ public class Pila<T> implements LinkedList<T> {
     }
 
     @Override
-    public T getIndex(int index) {
+    public T get(int index) {
         return null;
     }
 

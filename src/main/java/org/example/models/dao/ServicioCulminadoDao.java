@@ -2,6 +2,7 @@ package org.example.models.dao;
 
 import org.example.estructuras.Cola;
 import org.example.estructuras.LinkedList;
+import org.example.estructuras.LinkedListSimple;
 import org.example.models.*;
 import org.example.services.SolicitudesService;
 import org.example.services.TaxisService;
@@ -29,11 +30,12 @@ public class ServicioCulminadoDao implements CrudRepository<ServicioCulminado>{
 
     @Override
     public LinkedList<ServicioCulminado> findAll() throws SQLException{
-        LinkedList<ServicioCulminado> servicios = new Cola<>();
+        LinkedList<ServicioCulminado> servicios = new LinkedListSimple<>();
         try(Statement stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM servicios_culminados AS sc INNER JOIN centros_turisticos AS ct ON (ct.id_centro = sc.id_centro) ")) {
+            ResultSet rs = stmt.executeQuery("SELECT * FROM servicios_culminados AS sc INNER JOIN centros_turisticos AS ct ON (ct.id_centro = sc.id_centro) " +
+                    "INNER JOIN taxis AS t ON (t.id_chapa = sc.id_taxi)")) {
             while (rs.next()){
-                servicios.push(crearServicioCulminado(rs));
+                servicios.add(crearServicioCulminado(rs));
             }
         }
         return servicios;
@@ -84,7 +86,7 @@ public class ServicioCulminadoDao implements CrudRepository<ServicioCulminado>{
 
     private ServicioCulminado crearServicioCulminado(ResultSet rs) throws SQLException {
         return new ServicioCulminado(
-                SolicitudesService.getSolicitud(rs.getInt("id_solicitud")),
+                SolicitudesService.crearSolicitud(rs),
                 TaxisService.crearTaxi(rs),
                 rs.getDate("fecha").toLocalDate(),
                 rs.getTime("hora_fin").toLocalTime()

@@ -78,4 +78,16 @@ public abstract class Taxi {
                                            : ((TaxiParticular)this).getNoPatente()
         ;
     }
+
+    @Override
+    public String toString() {
+        return "Taxi{" +
+                "id='" + id + '\'' +
+                ", estado='" + estado + '\'' +
+                ", marca='" + marca + '\'' +
+                ", capacidad=" + capacidad +
+                ", combustible=" + combustible +
+                ", chofer='" + chofer + '\'' +
+                '}';
+    }
 }

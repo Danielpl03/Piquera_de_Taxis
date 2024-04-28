@@ -2,8 +2,10 @@ package org.example.models.dao;
 
 import org.example.estructuras.Cola;
 import org.example.estructuras.LinkedList;
+import org.example.estructuras.LinkedListSimple;
 import org.example.models.Taxi;
 import org.example.models.TaxiEstatal;
+import org.example.services.Postgres;
 import org.example.services.TaxisService;
 
 import java.sql.*;
@@ -28,11 +30,11 @@ public class TaxiDao implements CrudRepository<Taxi>{
 
     @Override
     public LinkedList<Taxi> findAll() throws SQLException{
-        LinkedList<Taxi> taxis = new Cola<>();
+        LinkedList<Taxi> taxis = new LinkedListSimple<>();
         try(Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM taxis")) {
             while (rs.next()){
-                taxis.push(TaxisService.crearTaxi(rs));
+                taxis.add(TaxisService.crearTaxi(rs));
             }
         }
         return taxis;
@@ -44,16 +46,16 @@ public class TaxiDao implements CrudRepository<Taxi>{
         String tipo, campo;
         if (dato instanceof TaxiEstatal) {
             tipo = "taxi_estatal";
-            campo = "nombre_empresa";
+            campo = "nombre_estatal";
         } else{
-            tipo = "taxi_empresa";
+            tipo = "taxi_particular";
             campo = "no_patente";
         }
-        if (dato.getId() != null){
-            consulta = "UPDATE taxis SET id_chapa=?, estado=?, marca=?, capacidad=?, id_chofer=?, cant_combustible=?, tipo=? WHERE id_chapa = ?";
+        if (this.findById(dato.getId()) != null){
+            consulta = "UPDATE taxis SET id_chapa=?, estado=?, marca=?, capacidad=?, chofer=?, combustible=?, tipo=? WHERE id_chapa = ?";
             consultaXTipo = "UPDATE ".concat(tipo.concat(" SET ".concat(campo.concat("=? WHERE id_chapa = ?"))));
         }else {
-            consulta = "INSERT INTO taxis(id_chapa, estado, marca, capacidad, id_chofer, cant_combustible, tipo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            consulta = "INSERT INTO taxis(id_chapa, estado, marca, capacidad, chofer, combustible, tipo) VALUES (?, ?, ?, ?, ?, ?, ?)";
             consultaXTipo = "INSERT INTO ".concat(tipo).concat("( ".concat(campo).concat(", id_chapa) VALUES (?, ?)"));
         }
         try(PreparedStatement stmt = connection.prepareStatement(consulta)){
@@ -64,7 +66,7 @@ public class TaxiDao implements CrudRepository<Taxi>{
             stmt.setString(5, dato.getChofer());
             stmt.setFloat(6, dato.getCombustible());
             stmt.setString(7, tipo);
-            if (dato.getId() != null){
+            if (this.findById(dato.getId()) != null){
                 stmt.setString(8, dato.getId());
             }
             stmt.executeUpdate();
@@ -88,22 +90,35 @@ public class TaxiDao implements CrudRepository<Taxi>{
         }
     }
 
-    public ResultSet findTaxi(String id, String tabla) throws SQLException {
+    public String findTaxi(String id, String tabla) throws SQLException {
         String consulta = "SELECT * FROM ".concat(tabla).concat(" WHERE id_chapa = ?");
+        connection = Postgres.getConnection();
         try(PreparedStatement stmt = connection.prepareStatement(consulta)){
             stmt.setString(1, id);
             try(ResultSet rs = stmt.executeQuery()) {
-                return rs;
+                if (rs.next()) {
+                    if (tabla.equals("taxi_estatal")) {
+                        return rs.getString("empresa");
+                    }
+                    return rs.getString("no_patente");
+                }
             }
         }
+        return null;
     }
 
     @Override
     public void setConnection(Connection connection) throws SQLException {
         this.connection = connection;
     }
-     public void actualizarTaxiDeDisponibleAOcupado(Taxi taxi, String tabla){
-        String consulta = /*todo consulta sql*/"";
-        // todo procesar la consulta
+     public void actualizarTaxi(Taxi dato) throws SQLException {
+        String consulta = "UPDATE taxis SET estado=?, cant_combustible=? WHERE id_chapa = ?";
+
+         try(PreparedStatement stmt = connection.prepareStatement(consulta)) {
+             stmt.setString(1, dato.getEstado());
+             stmt.setFloat(2, dato.getCombustible());
+             stmt.setString(3, dato.getId());
+             stmt.executeUpdate();
+         }
     }
 }

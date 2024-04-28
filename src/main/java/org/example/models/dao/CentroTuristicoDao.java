@@ -2,6 +2,7 @@ package org.example.models.dao;
 
 import org.example.estructuras.Cola;
 import org.example.estructuras.LinkedList;
+import org.example.estructuras.LinkedListSimple;
 import org.example.models.CentroTuristico;
 
 import java.sql.*;
@@ -11,7 +12,7 @@ public class CentroTuristicoDao implements CrudRepository<CentroTuristico>{
 
     @Override
     public CentroTuristico findById(int id) throws SQLException {
-        try(PreparedStatement stmt = connection.prepareStatement("SELECT * FROM centros_turisticos Where id=?")){
+        try(PreparedStatement stmt = connection.prepareStatement("SELECT * FROM centros_turisticos Where id_centro=?")){
             stmt.setInt(1, id);
             stmt.executeQuery();
             try (ResultSet rs = stmt.executeQuery()) {
@@ -27,11 +28,11 @@ public class CentroTuristicoDao implements CrudRepository<CentroTuristico>{
 
     @Override
     public LinkedList<CentroTuristico> findAll() throws SQLException {
-        LinkedList<CentroTuristico> centros = new Cola<>();
+        LinkedList<CentroTuristico> centros = new LinkedListSimple<>();
         try(Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery("SELECT * FROM centros_turisticos")){
             while(rs.next()){
-                centros.push(crearCentroTuristico(rs));
+                centros.add(crearCentroTuristico(rs));
             }
         }
         return centros;

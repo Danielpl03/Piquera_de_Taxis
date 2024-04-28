@@ -33,7 +33,7 @@ public class ServicioInmediatoDao implements CrudRepository<Solicitud>{
             ResultSet rs = stmt.executeQuery("SELECT * FROM servicios_inmediatos AS si INNER JOIN " +
                     "centros_turisticos AS ct ON (ct.id_centro = si.id_centro) ORDER BY ct.tiene_contrato desc")) {
             while (rs.next()){
-                solicitudes.push(SolicitudesService.crearSolicitud(rs));
+                solicitudes.add(SolicitudesService.crearSolicitud(rs));
             }
         }
         return solicitudes;
